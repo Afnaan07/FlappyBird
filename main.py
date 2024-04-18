@@ -36,7 +36,7 @@ class Bird(pygame.sprite.Sprite):
         self.index = 0
         self.counter = 0
         for num in range(1, 4):
-            img = pygame.image.load(f'img/bird{num}.png')
+            img = pygame.image.load(f'img/bird1.0.png')
             self.images.append(img) # addar bilder tiåll list
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
@@ -126,14 +126,14 @@ while run:
 
     #marken
     screen.blit(floor_img, (ground_scroll, 500))
-    #kollar för krockar
+    #kollar för krockar för pipen
     if pygame.sprite.groupcollide(pipe_group, bird_group, False, False):
         print("Hit!")
         game_over = True
 
 
     #kollar när fågeln har nuddat marken
-    if flappy.rect.bottom >= 1080:
+    if flappy.rect.bottom >= 500:
         game_over = True
         print("Hit!")
         flying = False
