@@ -35,12 +35,14 @@ pass_pipe = False
 bg = pygame.image.load('img/bg.png')
 floor_img = pygame.image.load('img/floor.png')
 knapp_img = pygame.image.load('img/restartknapp.png')
+gameover_img = pygame.image.load('img/gameover.png')
 
+#definerar text, textfärg och textstil
 def rita_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
-
+#startar om spelet och börjar allt om från början
 def reset_game():
     pipe_group.empty()
     flappy.rect.x = 100
@@ -136,6 +138,16 @@ class Button():
         screen.blit(self.image, (self.rect.x, self.rect.y))
 
         return action
+class Over():
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+    #ritar game over
+    def draw(self):
+        action = False
+        screen.blit(self.image, (self.rect.x, self.rect.y))
 
 bird_group = pygame.sprite.Group()
 pipe_group = pygame.sprite.Group()
@@ -145,9 +157,9 @@ flappy = Bird(20, int(screen_height / 2))
 bird_group.add(flappy)
 bird_group.update()
 
-#skapar exemplar på restart knappar
+#skapar restartknappen
 knapp = Button(screen_width // 2 - 50, screen_height // 2 -100, knapp_img)
-
+over = Over(screen_width // 2 - 270, screen_height // 2 - 200, gameover_img)
 
 run = True
 while run:
@@ -209,6 +221,10 @@ while run:
     #kollar när spelet är över och startar om
     if game_over == True:
         if knapp.draw() == True:
+            game_over = False
+            score = reset_game()
+
+        if over.draw() == True:
             game_over = False
             score = reset_game()
 
