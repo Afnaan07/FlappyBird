@@ -13,7 +13,7 @@ screen_width = 500
 screen_height = 550
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Flappy bird')
+pygame.display.set_caption('Fyling bird cock sucker')
 
 #definerar texten
 font = pygame.font.SysFont('Bauhaus 93', 60)
@@ -34,12 +34,14 @@ pass_pipe = False
 middle_screen_w = screen_width // 2
 middle_screen_h = screen_height // 2
 
+
 #Bilder
 bg = pygame.image.load('img/bg.png')
 floor_img = pygame.image.load('img/floor.png')
 knapp_img = pygame.image.load('img/restartknapp.png')
 gameover_img = pygame.image.load('img/gameover.png')
 coin_img = pygame.image.load('img/coin.png')
+start_img = pygame.image.load('img/space_bar.png')
 
 #ljud
 jump_fx = pygame.mixer.Sound('img/jump.wav')
@@ -151,6 +153,16 @@ class Pipe(pygame.sprite.Sprite):
             self.kill()
 
 
+class Start():
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+    def draw(self):
+        screen.blit(self.image, (self.rect.x, self.rect.y))
+
+start_text = Start(middle_screen_w - 50, middle_screen_h - 50, start_img)
 class Button():
     def __init__(self, x, y, image):
         self.image = image
@@ -294,7 +306,8 @@ while run:
                 if flying == False and game_over == False:
                     flying = True
 
-
+    if not flying and not game_over:
+        start_text.draw()
 
     pygame.display.update()
 
