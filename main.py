@@ -91,11 +91,12 @@ class Bird(pygame.sprite.Sprite):
 
 
             #Hopp funktion
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+            key = pygame.key.get_pressed()
+            if key[pygame.K_SPACE] and self.clicked == False:
                 jump_fx.play()
                 self.clicked = True
                 self.vel = -8
-            if pygame.mouse.get_pressed()[0] == 0:
+            if key[pygame.K_SPACE] == 0:
                 self.clicked = False
 
 
@@ -288,8 +289,10 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if event.type == pygame.MOUSEBUTTONDOWN and flying == False and game_over == False:
-            flying = True
+        if event.type == pygame.KEYDOWN:  # Check for key press events
+            if event.key == pygame.K_SPACE:  # Check if spacebar is pressed
+                if flying == False and game_over == False:
+                    flying = True
 
 
 
