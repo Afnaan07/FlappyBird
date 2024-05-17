@@ -1,19 +1,19 @@
-import pygame
+import pygame #importerar pygame
 from pygame.locals import *
 import random
 from pygame import mixer
-pygame.mixer.pre_init(44100, -16, 2, 512)
+pygame.mixer.pre_init(44100, -16, 2, 512) #
 mixer.init()
 pygame.init()
 
 klocka = pygame.time.Clock()
-fps = 60
+fps = 90 #frames per second
 
-screen_width = 500
-screen_height = 550
+screen_width = 500 #hur bredd skärmen ska vara
+screen_height = 550 #hur hög skärmen ska var
 
 screen = pygame.display.set_mode((screen_width, screen_height))
-pygame.display.set_caption('Fyling bird cock sucker')
+pygame.display.set_caption('Mahir vill få den där bak')
 
 #definerar texten
 font = pygame.font.SysFont('Bauhaus 93', 60)
@@ -33,6 +33,7 @@ score = 0
 pass_pipe = False
 middle_screen_w = screen_width // 2
 middle_screen_h = screen_height // 2
+bg_music_playing = False
 
 
 #Bilder
@@ -42,16 +43,18 @@ knapp_img = pygame.image.load('img/restartknapp.png')
 gameover_img = pygame.image.load('img/gameover.png')
 coin_img = pygame.image.load('img/coin.png')
 start_img = pygame.image.load('img/space_bar.png')
-
+exp_img = pygame.image.load('img/explosion.gif')
 #ljud
 jump_fx = pygame.mixer.Sound('img/jump.wav')
 jump_fx.set_volume(0.5)
 game_over_fx = pygame.mixer.Sound('img/game_over.mp3')
 game_over_fx.set_volume(0.5)
 coin_fx = pygame.mixer.Sound('img/coin.wav')
-coin_fx.set_volume(0.8)
-bg_music_fx = pygame.mixer.Sound('img/bg_music.mp3')
-bg_music_fx.set_volume(0.3)
+coin_fx.set_volume(0.5)
+bg_music_fx = pygame.mixer.Sound('img/bg_music.wav ')
+bg_music_fx.set_volume(0.1)
+
+
 #definerar text, textfärg och textstil
 def rita_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
@@ -81,8 +84,9 @@ class Bird(pygame.sprite.Sprite):
         self.vel = 0
         self.clicked = False
 
-    def update(self):
+    def update(self): #uppdaterar fågeln
         if flying == True:
+
             #Gravitation
             self.vel += 0.5
             if self.vel > 8:
@@ -113,7 +117,7 @@ class Bird(pygame.sprite.Sprite):
                     self.index = 0
             self.image = self.images[self.index]
 
-class Coin(pygame.sprite.Sprite):
+class Coin(pygame.sprite.Sprite): #definerar mynt
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = coin_img
@@ -128,7 +132,7 @@ class Coin(pygame.sprite.Sprite):
 
 coin_group = pygame.sprite.Group() #skapar en grupp som skapar mynt
 def spawn_coins():
-    if random.randint(1, 150) == 1: #Hur mycket och vart myntet ska spawna
+    if random.randint(1, 100) == 1: #Hur mycket och vart myntet ska spawna
         coin = Coin(screen_width, random.randint(90, screen_height - 90))
         coin_group.add(coin)
 
@@ -153,7 +157,18 @@ class Pipe(pygame.sprite.Sprite):
             self.kill()
 
 
-class Start():
+class Start(): #definerar "press spacebar"
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+    def draw(self):
+        screen.blit(self.image, (self.rect.x, self.rect.y)) #Ritar "Press Space" på skärmen
+
+start_text = Start(middle_screen_w - 60, middle_screen_h - 60, start_img) #Placerar vart den bilden ska hamnas
+
+class Explosion():
     def __init__(self, x, y, image):
         self.image = image
         self.rect = self.image.get_rect()
@@ -161,8 +176,6 @@ class Start():
 
     def draw(self):
         screen.blit(self.image, (self.rect.x, self.rect.y))
-
-start_text = Start(middle_screen_w - 50, middle_screen_h - 50, start_img)
 class Button():
     def __init__(self, x, y, image):
         self.image = image
@@ -206,14 +219,14 @@ flappy = Bird(20, int(screen_height / 2))
 bird_group.add(flappy)
 bird_group.update()
 
-#skapar restartknappen
+#vad som ska komma upp när man dör
 knapp = Button(middle_screen_w - 50, middle_screen_h -100, knapp_img)
 over = Over(middle_screen_w - 270, middle_screen_h - 200, gameover_img)
-
+explosion = Explosion(middle_screen_w - 150, middle_screen_h -  50, exp_img)
 run = True
 while run:
 
-    bg_music_fx.play()
+
     klocka.tick(fps)
 
     #bakgreundsbilderna
@@ -297,17 +310,23 @@ while run:
             game_over = False
             score = reset_game()
 
+        if explosion.draw() == True:
+            game_over = True
+            score = reset_game()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if event.type == pygame.KEYDOWN:  # Check for key press events
-            if event.key == pygame.K_SPACE:  # Check if spacebar is pressed
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:  # kollar om space är tryckt
                 if flying == False and game_over == False:
                     flying = True
 
     if not flying and not game_over:
         start_text.draw()
+        bg_music_fx.stop()
+
+
 
     pygame.display.update()
 
